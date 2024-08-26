@@ -1,0 +1,19 @@
+Entidades:
+user
+admJogo
+gameSite
+
+Adicionar:
+1-img automaticas só com o nome do jogo
+2-barra de pesquisa
+3-login/ adm ou user
+4-colocar jogo ou tirar / adm passa pela verificação gameSite
+5-informações sobre o jogo 
+6-carrousel com as novidades / user controlado gameSite
+7-carrinho/user
+8-lista de desejos/ user
+9-classificação / user adm define e gameSite verifica
+10-generos / user e adm
+11-plataforma / user e adm
+12-suporte / user --> gameSite
+13-ajuda / user
