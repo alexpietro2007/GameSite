@@ -17,3 +17,4 @@ Adicionar:
 11-plataforma / user e adm
 12-suporte / user --> gameSite
 13-ajuda / user
+14- sempre que um jgo ficar em promação mandar um email se ele estiver na lista de desejos
