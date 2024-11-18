@@ -67,26 +67,29 @@ app.get('/home', (req, res) =>{
 app.get('/cadastro', (req, res) =>{
     res.render('cadastro')
 })
-app.get('/VerificandoLogin', (req, res)=>{
-    let user = req.query.user
-    let password = req.query.password
-    connection.query('SELECT usuario, password FROM tbl_user WHERE usuario = ? AND password = ?'
-        ,[user, password],
-        (error, results) =>{
+app.get('/VerificandoLogin', (req, res) => {
+    let user = req.query.user;
+    let password = req.query.password;
+
+    connection.query(
+        'SELECT user, password FROM tbl_user WHERE user = ? AND password = ?',
+        [user, password],
+        (error, results) => {
             if (error) {
                 console.error('Erro ao buscar os dados:', error);
+                res.render('login', { error: 'Ocorreu um erro ao verificar o login.' });
                 return;
-              }
-          
-              if (results.length > 0) {
-                res.render('home')
-              } else {
-                
-              }
-          
+            }
+
+            if (results.length > 0) {
+                res.render('home'); // Login bem-sucedido
+            } else {
+                res.render('login', { error: 'Usuário ou senha inválidos!' }); // Mensagem de erro
+            }
         }
-    )
-})
+    );
+});
+
 
 // Ouça na porta fornecida pelo ambiente de execução
 const PORT = process.env.PORT || 3000;

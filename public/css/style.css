@@ -13,6 +13,13 @@ body {
     & img{
         height: 25vh;
     }
+    & h1{
+        position: fixed;
+        z-index: -1;
+        font-size: 25vw;
+        color: #e2e2e2;
+        opacity: 0.4;
+    }
 }
 .navbar {
     background-color: black;
@@ -33,9 +40,17 @@ body {
 }
 .login-container {
     background-color: black ;
+    display: flex;
+    flex-direction: column;
     padding: 20px;
     border-radius: 10px;
     align-content: center;
+    & p{
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        color: red;
+    }
     & a{
         color: white;
     }
@@ -52,13 +67,11 @@ body {
     color: white;
 }
 .login-container button {
-    width: 100%;
     padding: 10px;
     background-color: #1a1a74;
     color: white;
     border: none;
     border-radius: 6px;
-    width: 70px;
     cursor: pointer;
     margin-bottom: 10px;
 }
