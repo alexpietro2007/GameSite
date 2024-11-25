@@ -4,11 +4,12 @@ import { fileURLToPath } from 'url';
 import { create } from 'express-handlebars';
 import { readFileSync } from 'fs';
 import mysql from 'mysql2'
+import session, { Cookie } from 'express-session';
 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const hbs = create({partialsDir: [path.join(__dirname, 'views', 'partials')]});
+const hbs = create({ partialsDir: [path.join(__dirname, 'views', 'partials')] });
 const app = express();
 const log = console.log
 const connection = mysql.createConnection({
@@ -16,8 +17,14 @@ const connection = mysql.createConnection({
     user: 'root', // seu nome de usuário
     password: 'neurose@87', // sua senha
     database: 'VROOM' // o nome do seu banco de dados
-    
+
 });
+app.use(session({
+    secret: 'AlexPietro@gg',
+    resave: false,
+    saveUninitialized: false,
+    Cookie: { secure: false }
+}))
 
 connection.connect((err) => {
     if (err) {
@@ -42,7 +49,7 @@ app.get('/', (req, res) => {
     res.redirect('/loginUser');
 });
 
-app.get('/loginUser?', (req, res) =>{
+app.get('/loginUser?', (req, res) => {
     res.render('login')
 })
 
@@ -61,15 +68,24 @@ app.get('/Verificando', (req, res) => {
     });
 });
 
-app.get('/home', (req, res) =>{
+app.get('/home', (req, res) => {
     res.render('home')
 })
-app.get('/cadastro', (req, res) =>{
+app.get('/cadastro', (req, res) => {
     res.render('cadastro')
 })
+function isAuthenticated(req, res, next) {
+    if (req.session.isAuthenticated) {
+        next(); // Usuário autenticado, continuar
+    } else {
+        res.redirect('/login'); // Redirecionar para login se não autenticado
+    }
+}
+
+// Endpoint de login
 app.get('/VerificandoLogin', (req, res) => {
-    let user = req.query.user;
-    let password = req.query.password;
+    const user = req.query.user;
+    const password = req.query.password;
 
     connection.query(
         'SELECT user, password FROM tbl_user WHERE user = ? AND password = ?',
@@ -82,13 +98,34 @@ app.get('/VerificandoLogin', (req, res) => {
             }
 
             if (results.length > 0) {
-                res.render('home'); // Login bem-sucedido
+                // Salvar dados na sessão
+                req.session.isAuthenticated = true;
+                req.session.user = user;
+
+                res.redirect('/home'); // Redirecionar para home
             } else {
-                res.render('login', { error: 'Usuário ou senha inválidos!' }); // Mensagem de erro
+                res.render('login', { error: 'Usuário ou senha inválidos!' });
             }
         }
     );
 });
+
+// Página inicial (rota protegida)
+app.get('/home', isAuthenticated, (req, res) => {
+    res.render('home', { layouts: 'pagina', user: req.session.user });
+});
+
+// Logout
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Erro ao encerrar a sessão:', err);
+            return res.redirect('/home');
+        }
+        res.redirect('/login');
+    });
+});
+
 
 
 // Ouça na porta fornecida pelo ambiente de execução
